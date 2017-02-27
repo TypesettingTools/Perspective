@@ -22,4 +22,4 @@ Former is usually easier to use because of closer origin.
 This kind of perspective is easier to use for multiple signs or multiliners but it may be harder to position or use with motion tracking compared to perspective without \org.
 
 ### Hopefully easier-to-get instructions
-![alt text](http://puu.sh/umAMv/9a58ddbdff.png "old version, though")
+![alt text](http://puu.sh/umBNo/d9c55343fa.png "old version of script, though")

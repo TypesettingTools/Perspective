@@ -251,7 +251,9 @@ for i in xrange(steps):
     p, ratio = zero
     rots.append((ratio, p, a))
 
-
+if len(rots)==0:
+    print("\nNo proper perspective found.")
+    exit()
 print("\nTransforms near center of tetragon:")
 t_center = coord[0].add(coord[1]).add(coord[2]).add(coord[3]).mul(0.25)
 ratio, p, a = min(rots, key = lambda x:dist(t_center, x[1]))
@@ -271,8 +273,12 @@ if len(segs)>0:
     print("\nTransforms with target ratio:")
     for seg in segs:
         def f(a):
-            p, ratio = zero_on_ray(center, v, a, 1E-05)
-            return ratio-target_ratio
+            res = zero_on_ray(center, v, a, 1E-05)
+            if res is None:
+                return 1E7
+            else:
+                p, ratio = res
+                return ratio-target_ratio
         a = binary_search(f, seg[0], seg[1], eps=1E-04)
         if a is None:
             a = seg[0]

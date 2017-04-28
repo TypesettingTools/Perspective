@@ -23,7 +23,7 @@ You're supposed to use it without \org and it will look fine as long as your sig
 Additionally script returns some proper perspectives with \org and without \fax.
 Among possible origins it picks the one closest to tetragon and ones that result in width/height ratio closer to target.
 Former is usually easier to use because of closer origin.
-This kind of perspective is easier to use for multiple signs or multiliners but it may be harder to position or use with motion tracking compared to perspective without \org.
+This kind of perspective is easier to use for multiple signs or multiliners but it may be harder to position or use with motion tracking compared to perspective without \org. Don't try to use origin with coordinates over 100000000, renderers won't work with it properly.
 
 ### Hopefully easier-to-get instructions
 ![alt text](http://puu.sh/umBNo/d9c55343fa.png "old version of script, though")

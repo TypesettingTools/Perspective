@@ -166,10 +166,13 @@ def parse_args(args):
                         help="Coordinates of tetragon")
     parser.add_argument("-o", "--origin", default=False,
                         type=str, metavar="O", dest="target_origin",
-                        help="Desired origin coordinates")
+                        help="Desired origin coordinates. Coordinates for multiple origin points should be separated by semicolon.")
     parser.add_argument("-r", "--ratio", default=False,
                         type=str, metavar="R", dest="target_ratio",
                         help="Output file")
+    parser.add_argument("-s", "--scale", default=1,
+                        type=float, metavar="S", dest="scale",
+                        help="Scaling factor. Simply multiples input coordinates.")
     return parser.parse_args(args)
 
 def getfloats(s):
@@ -180,20 +183,32 @@ coord = getfloats(args.coord)[:8]
 coord = zip(coord[::2], coord[1::2])
 coord = list(map(Point, coord))
 target_org = args.target_origin
-if target_org:
-    target_org = Point(*getfloats(args.target_origin)[:2])
-
+scale = args.scale
+if args.target_origin:
+    target_orgs = []
+    for o in args.target_origin.split(";"):
+        target_orgs.append(Point(*getfloats(o)[:2]))
+else:
+    target_orgs = False
+if scale != 1:
+    for i in xrange(len(coord)):
+        coord[i] = coord[i].mul(scale)
+    if target_orgs:
+        for i in xrange(len(target_orgs)):
+            target_orgs[i] = target_orgs[i].mul(scale)
 if args.target_ratio:
     target_ratio = getfloats(args.target_ratio)[0]
 else:
     target_ratio = dist(coord[0], coord[1])/dist(coord[0], coord[3])
-if target_org:
-    tf_tags = unrot(coord, target_org, get_rot=True)
-    print("Transform for target org:")
-    if tf_tags is None:
-        print(tf_tags)
-    else:
-        print("\\org(%.1f, %.1f)\n" % (target_org.x, target_org.y) + tf_tags)
+
+if target_orgs:
+    print("\nTransform for target org:")
+    for target_org in target_orgs:
+        tf_tags = unrot(coord, target_org, get_rot=True)
+        if tf_tags is None:
+            print(tf_tags)
+        else:
+            print("\\org(%.1f, %.1f)\n" % (target_org.x, target_org.y) + tf_tags)
 
 mn_point = find_ex(min)
 mx_point = find_ex(max)
@@ -237,7 +252,7 @@ for i in xrange(steps):
     rots.append((ratio, p, a))
 
 
-print("Transforms near center of tetragon:")
+print("\nTransforms near center of tetragon:")
 t_center = coord[0].add(coord[1]).add(coord[2]).add(coord[3]).mul(0.25)
 ratio, p, a = min(rots, key = lambda x:dist(t_center, x[1]))
 tf_tags = unrot(coord, p, get_rot=True)
@@ -253,7 +268,7 @@ for i in xrange(len(rots)):
 orgs = []
 got_tf = False
 if len(segs)>0:
-    print("Transforms with target ratio:")
+    print("\nTransforms with target ratio:")
     for seg in segs:
         def f(a):
             p, ratio = zero_on_ray(center, v, a, 1E-05)
@@ -268,7 +283,7 @@ if len(segs)>0:
         print("\\org(%.1f, %.1f)" % (p.x, p.y) + tf_tags)
         got_tf = True
 if not got_tf and len(rots)>0:
-    print("Transforms close to target ratio:")
+    print("\nTransforms close to target ratio:")
     ratio, p, a = min(rots, key = lambda x:abs(target_ratio - x[0]))
     tf_tags = unrot(coord, p, get_rot=True)
     if tf_tags is not None:

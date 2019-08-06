@@ -83,7 +83,7 @@ def unrot(coord_in, org, diag=True, get_rot=False):
     center = Point(center.x, center.y, screen_z)
     rays = [Point(c.x, c.y, screen_z) for c in coord]
     f = []
-    for i in xrange(2):
+    for i in range(2):
         vp1 = vec_pr(rays[0+i], center).length()
         vp2 = vec_pr(rays[2+i], center).length()
         a = rays[0+i]
@@ -146,11 +146,11 @@ def find_ex(f):
     w_size = 100000.0
     iterations = int(math.log(w_size*100, 4))
     s = 4
-    for k in xrange(iterations):
+    for k in range(iterations):
         res = []
-        for i in xrange(-s, s):
+        for i in range(-s, s):
             x = w_center[0] + w_size*i/10
-            for j in xrange(-s, s):
+            for j in range(-s, s):
                 y = w_center[1] + w_size*j/10
                 res.append((unrot(coord, Point(x, y)), x, y))
         ex = f(res)
@@ -191,10 +191,10 @@ if args.target_origin:
 else:
     target_orgs = False
 if scale != 1:
-    for i in xrange(len(coord)):
+    for i in range(len(coord)):
         coord[i] = coord[i].mul(scale)
     if target_orgs:
-        for i in xrange(len(target_orgs)):
+        for i in range(len(target_orgs)):
             target_orgs[i] = target_orgs[i].mul(scale)
 if args.target_ratio:
     target_ratio = getfloats(args.target_ratio)[0]
@@ -243,7 +243,7 @@ def zero_on_ray(center, v, a, eps):
 
 rots = []
 steps = 100
-for i in xrange(steps):
+for i in range(steps):
     a = 2*math.pi*i/steps
     zero = zero_on_ray(center, v, a, 1E-02)
     if zero is None:
@@ -264,7 +264,7 @@ else:
     print("Ratio=%f" % ratio)
     print("\\org(%.1f, %.1f)" % (p.x, p.y) + tf_tags)
 segs = []
-for i in xrange(len(rots)):
+for i in range(len(rots)):
     if (rots[i-1][0]-target_ratio)*(rots[i][0]-target_ratio)<=0:
         segs.append((rots[i-1][2], rots[i][2]))
 orgs = []
@@ -282,7 +282,9 @@ if len(segs)>0:
         a = binary_search(f, seg[0], seg[1], eps=1E-04)
         if a is None:
             a = seg[0]
-        p, ratio = zero_on_ray(center, v, a, 1E-05)
+        zero = zero_on_ray(center, v, a, 1E-05)
+        if (zero is None): continue
+        p, ratio = zero
         tf_tags = unrot(coord, p, get_rot=True)
         if tf_tags is None: continue
         print("Ratio=%f" % ratio)

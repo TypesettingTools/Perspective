@@ -176,7 +176,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 def getfloats(s):
-    return list(map(float, re.findall('[\d\.]+', s)))
+    return list(map(float, re.findall('[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?', s)))
 
 args = parse_args(sys.argv[1:])
 coord = getfloats(args.coord)[:8]
